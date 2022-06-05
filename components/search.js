@@ -1,0 +1,157 @@
+import { useFormik } from "formik";
+import { useRouter } from "next/router";
+import { useCallback } from "react";
+import { Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
+const queryString = require("querystring");
+export default function Search({ actionTypes, applicationTypes }) {
+  const router = useRouter();
+  const {
+    to_date = "",
+    from_date = "",
+    application_id = "",
+    action_type = "",
+    application_type = "",
+  } = router.query;
+
+  const onSubmit = useCallback(
+    (values) => {
+      const {
+        to_date,
+        from_date,
+        application_id,
+        action_type,
+        application_type,
+      } = values || {};
+
+      const toBePushed = {
+        ...(!!to_date && { to_date }),
+        ...(!!from_date && { from_date }),
+        ...(!!application_id && { application_id }),
+        ...(!!action_type && { action_type }),
+        ...(!!application_type && { application_type }),
+      };
+      if (Object.keys(toBePushed || {}).length > 0) {
+        router.replace(`/?${queryString.stringify(toBePushed)}`, undefined, {
+          shallow: true,
+        });
+      } else {
+        router.replace("/", undefined, { shallow: true });
+      }
+    },
+    [router]
+  );
+  const { values, handleChange, handleSubmit } = useFormik({
+    initialValues: {
+      to_date,
+      from_date,
+      action_type,
+      application_type,
+      application_id,
+    },
+    onSubmit: onSubmit,
+  });
+
+  const getOptions = useCallback(
+    (data) => (
+      <>
+        {" "}
+        <option value={""}>Please Select</option>
+        {data.map((item) => {
+          return (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          );
+        })}
+      </>
+    ),
+    []
+  );
+  return (
+    <Form onSubmit={handleSubmit}>
+      <Row>
+        <Col md={2}>
+          <FormGroup>
+            <Label>Employee Name</Label>
+            <Input disabled placeholder="N/A" />
+          </FormGroup>
+        </Col>
+
+        <Col md={2}>
+          <FormGroup>
+            <Label>Action Type</Label>
+            <Input
+              value={values.action_type}
+              onChange={handleChange}
+              name="action_type"
+              type="select"
+              placeholder="Action Type"
+            >
+              {getOptions(actionTypes)}
+            </Input>
+          </FormGroup>
+        </Col>
+        <Col md={2}>
+          <FormGroup>
+            <Label>Application Type</Label>
+            <Input
+              type="select"
+              onChange={handleChange}
+              name="application_type"
+              value={values.application_type}
+              placeholder="Application Type"
+            >
+              {getOptions(applicationTypes)}
+            </Input>
+          </FormGroup>
+        </Col>
+        <Col md={3}>
+          <FormGroup>
+            <Label>From Date</Label>
+            <Input
+              type="datetime-local"
+              onChange={handleChange}
+              name="from_date"
+              value={values.from_date}
+              placeholder="From Date"
+            />
+          </FormGroup>
+        </Col>
+        <Col md={3}>
+          <FormGroup>
+            <Label>To Date</Label>
+            <Input
+              type="datetime-local"
+              onChange={handleChange}
+              name="to_date"
+              value={values.to_date}
+              placeholder="To Date"
+            />
+          </FormGroup>
+        </Col>
+
+        <Col md={2}>
+          <FormGroup>
+            <Label>Application Id</Label>
+            <Input
+              type="text"
+              onChange={handleChange}
+              name="application_id"
+              placeholder="Application Id"
+              value={values.application_id}
+            />
+          </FormGroup>
+        </Col>
+        <Col md={3}>
+          <FormGroup>
+            <Input
+              className="btn btn-success mt-4"
+              value={"Search Logger"}
+              type="submit"
+            />
+          </FormGroup>
+        </Col>
+      </Row>
+    </Form>
+  );
+}
