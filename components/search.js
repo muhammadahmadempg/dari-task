@@ -1,8 +1,16 @@
 import { useFormik } from "formik";
+import moment from "moment";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { Col, Form, FormGroup, Input, Label, Row } from "reactstrap";
 const queryString = require("querystring");
+const getCurrentDate = () => {
+  const date = moment();
+  date.hours(23);
+  date.minutes(59);
+  date.seconds(59);
+  return `${date.format("YYYY-MM-DD")}`;
+};
 export default function Search({ actionTypes, applicationTypes }) {
   const router = useRouter();
   const {
@@ -31,16 +39,20 @@ export default function Search({ actionTypes, applicationTypes }) {
         ...(!!application_type && { application_type }),
       };
       if (Object.keys(toBePushed || {}).length > 0) {
-        router.replace(`/?${queryString.stringify(toBePushed)}`, undefined, {
-          shallow: true,
-        });
+        router.replace(
+          `/?${queryString.stringify({ ...toBePushed, page: 1 })}`,
+          undefined,
+          {
+            shallow: true,
+          }
+        );
       } else {
         router.replace("/", undefined, { shallow: true });
       }
     },
     [router]
   );
-  const { values, handleChange, handleSubmit } = useFormik({
+  const { values, handleChange, handleSubmit, errors, touched } = useFormik({
     initialValues: {
       to_date,
       from_date,
@@ -67,6 +79,7 @@ export default function Search({ actionTypes, applicationTypes }) {
     ),
     []
   );
+
   return (
     <Form onSubmit={handleSubmit}>
       <Row>
@@ -117,6 +130,7 @@ export default function Search({ actionTypes, applicationTypes }) {
               value={values.from_date}
               placeholder="From Date"
               size={"sm"}
+              max={getCurrentDate()}
             />
           </FormGroup>
         </Col>
@@ -130,7 +144,7 @@ export default function Search({ actionTypes, applicationTypes }) {
               value={values.to_date}
               placeholder="To Date"
               size={"sm"}
-              max={new Date().toISOString().split("T")[0]}
+              max={"2022-01-31T23:59"}
             />
           </FormGroup>
         </Col>

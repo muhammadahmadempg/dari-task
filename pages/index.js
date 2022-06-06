@@ -2,28 +2,43 @@ import _ from "lodash";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Container } from "reactstrap";
+import PaginationComponent from "../components/pagination";
 import Search from "../components/search";
 import DataTable from "../components/table";
-import { getFilteredDataBasedOnQuery } from "../utils/helperFunctions";
+import {
+  getDataAfterPageWiseData,
+  getDataAfterPagination,
+  getFilteredDataBasedOnQuery,
+} from "../utils/helperFunctions";
 import { fetchData } from "../utils/networkLayer";
 export default function IndexPage({
   actionTypes,
   applicationTypes,
   filteredData: filtered_data,
   result: { auditLog = [] } = {},
+  totalPages,
+  per_page,
 }) {
   const [filteredData, setFilteredData] = useState(filtered_data || []);
   const [tableSorting, setTableSorting] = useState({
     fields: [],
     sortingOptions: [],
   });
+  const [total_pages, setTotalPages] = useState(totalPages || 0);
   const router = useRouter();
   const { query } = router;
   useEffect(() => {
-    const data = getFilteredDataBasedOnQuery(auditLog, query);
-
+    const { filteredData, totalPages } = getDataAfterPagination(
+      getFilteredDataBasedOnQuery(auditLog, query),
+      { page: query.page }
+    );
+    setTotalPages(totalPages);
     setFilteredData(
-      _.orderBy([...data], tableSorting.fields, tableSorting.sortingOptions)
+      _.orderBy(
+        [...filteredData],
+        tableSorting.fields,
+        tableSorting.sortingOptions
+      )
     );
   }, [query, auditLog]);
   useEffect(() => {
@@ -49,6 +64,8 @@ export default function IndexPage({
         tableSorting={tableSorting}
         auditLog={filteredData || []}
       />
+
+      <PaginationComponent per_page={per_page} total_pages={total_pages} />
     </Container>
   );
 }
@@ -69,12 +86,14 @@ export const getServerSideProps = async (ctx) => {
         applicationTypes[applicationType] = 1;
       }
     });
-    const filteredData = getFilteredDataBasedOnQuery(auditLog, ctx.query);
 
     return {
       props: {
         ...data,
-        filteredData,
+        ...getDataAfterPagination(
+          getFilteredDataBasedOnQuery(auditLog, ctx.query),
+          { page: ctx.query.page }
+        ),
         actionTypes: Object.keys(actionTypes),
         applicationTypes: Object.keys(applicationTypes),
       },
