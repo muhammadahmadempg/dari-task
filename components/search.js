@@ -130,7 +130,7 @@ export default function Search({ actionTypes, applicationTypes }) {
               value={values.from_date}
               placeholder="From Date"
               size={"sm"}
-              max={getCurrentDate()}
+              max={`${getCurrentDate()}T23:59`}
             />
           </FormGroup>
         </Col>
@@ -144,7 +144,7 @@ export default function Search({ actionTypes, applicationTypes }) {
               value={values.to_date}
               placeholder="To Date"
               size={"sm"}
-              max={"2022-01-31T23:59"}
+              max={`${getCurrentDate()}T23:59`}
             />
           </FormGroup>
         </Col>
