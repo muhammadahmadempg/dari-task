@@ -36,7 +36,7 @@ export default function IndexPage({
     );
   }, [tableSorting]);
   return (
-    <Container>
+    <Container className="mt-3">
       <Search
         {...{
           actionTypes,

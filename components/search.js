@@ -72,20 +72,21 @@ export default function Search({ actionTypes, applicationTypes }) {
       <Row>
         <Col md={2}>
           <FormGroup>
-            <Label>Employee Name</Label>
-            <Input disabled placeholder="N/A" />
+            <Label size="sm">Employee Name</Label>
+            <Input size={"sm"} disabled placeholder="N/A" />
           </FormGroup>
         </Col>
 
         <Col md={2}>
           <FormGroup>
-            <Label>Action Type</Label>
+            <Label size="sm">Action Type</Label>
             <Input
               value={values.action_type}
               onChange={handleChange}
               name="action_type"
               type="select"
               placeholder="Action Type"
+              size={"sm"}
             >
               {getOptions(actionTypes)}
             </Input>
@@ -93,61 +94,67 @@ export default function Search({ actionTypes, applicationTypes }) {
         </Col>
         <Col md={2}>
           <FormGroup>
-            <Label>Application Type</Label>
+            <Label size="sm">Application Type</Label>
             <Input
               type="select"
               onChange={handleChange}
               name="application_type"
               value={values.application_type}
               placeholder="Application Type"
+              size={"sm"}
             >
               {getOptions(applicationTypes)}
             </Input>
           </FormGroup>
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <FormGroup>
-            <Label>From Date</Label>
+            <Label size="sm">From Date</Label>
             <Input
               type="datetime-local"
               onChange={handleChange}
               name="from_date"
               value={values.from_date}
               placeholder="From Date"
+              size={"sm"}
             />
           </FormGroup>
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <FormGroup>
-            <Label>To Date</Label>
+            <Label size="sm">To Date</Label>
             <Input
               type="datetime-local"
               onChange={handleChange}
               name="to_date"
               value={values.to_date}
               placeholder="To Date"
+              size={"sm"}
+              max={new Date().toISOString().split("T")[0]}
             />
           </FormGroup>
         </Col>
 
         <Col md={2}>
           <FormGroup>
-            <Label>Application Id</Label>
+            <Label size="sm">Application Id</Label>
             <Input
               type="text"
               onChange={handleChange}
               name="application_id"
               placeholder="Application Id"
               value={values.application_id}
+              size="sm"
             />
           </FormGroup>
         </Col>
-        <Col md={3}>
+        <Col md={2}>
           <FormGroup>
             <Input
               className="btn btn-success mt-4"
               value={"Search Logger"}
               type="submit"
+              size={"sm"}
             />
           </FormGroup>
         </Col>
